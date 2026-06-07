@@ -140,6 +140,7 @@ namespace KeyViewer
                 showViewer = KeyManager.isPlaying;
             if (showViewer != KeyManager.gameObject.activeSelf)
                 KeyManager.gameObject.SetActive(showViewer);
+            KPSCalculatorSync.Update();
 
             if (!IsListening) return;
             bool changed = false;
@@ -159,7 +160,6 @@ namespace KeyViewer
                 }
             }
             if (changed) KeyManager.UpdateKeys();
-            KPSCalculatorSync.Update();
         }
         public static void OnHideGUI(ModEntry modEntry)
         {
