@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32516.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyViewer", "KeyViewer\KeyViewer.csproj", "{C6FD7749-0E74-4798-AA33-69BB08DC1402}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Alpha|x64 = Alpha|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Alpha|x64.ActiveCfg = Alpha|x64
+		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Alpha|x64.Build.0 = Alpha|x64
+		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Release|x64.ActiveCfg = Release|x64
+		{C6FD7749-0E74-4798-AA33-69BB08DC1402}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A68DD0DC-B292-4388-BFAE-7A13C7511A3F}
+	EndGlobalSection
+EndGlobal
