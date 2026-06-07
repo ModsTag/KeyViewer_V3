@@ -102,9 +102,9 @@ namespace KeyViewer
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
                 GUILayout.BeginHorizontal();
-                MoreGUILayout.DiscordButtonLabel("Settings Backup Interval (s): ");
+                MoreGUILayout.NormalLabel("Settings Backup Interval (s): ");
                 int.TryParse(GUILayout.TextField(Settings.BackupInterval.ToString()), out Settings.BackupInterval);
-                MoreGUILayout.DiscordButtonLabel("s");
+                MoreGUILayout.NormalLabel("s");
                 if (Settings.BackupInterval < 5) Settings.BackupInterval = 5;
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
@@ -190,7 +190,7 @@ namespace KeyViewer
             GUILayout.Label(Lang.GetString("MIGRATE_FROM_V2_KEYVIEWER"), bold);
 
             GUILayout.BeginHorizontal();
-            MoreGUILayout.DiscordButtonLabel("KeyCounts.kc:");
+            MoreGUILayout.NormalLabel("KeyCounts.kc:");
             v2Arg.keyCountsPath = GUILayout.TextField(v2Arg.keyCountsPath);
             if (GUILayout.Button("Choose"))
                 v2Arg.keyCountsPath = UnityFileDialog.FileBrowser.PickFile(null, null, new string[1] { "kc" }, "Select KeyCounts");
@@ -198,7 +198,7 @@ namespace KeyViewer
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            MoreGUILayout.DiscordButtonLabel("KeySettings.ks:");
+            MoreGUILayout.NormalLabel("KeySettings.ks:");
             v2Arg.keySettingsPath = GUILayout.TextField(v2Arg.keySettingsPath);
             if (GUILayout.Button("Choose"))
                 v2Arg.keySettingsPath = UnityFileDialog.FileBrowser.PickFile(null, null, new string[1] { "ks" }, "Select KeySettings");
@@ -206,7 +206,7 @@ namespace KeyViewer
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            MoreGUILayout.DiscordButtonLabel("Settings.xml (Must Not Be Null!):");
+            MoreGUILayout.NormalLabel("Settings.xml (Must Not Be Null!):");
             v2Arg.settingsPath = GUILayout.TextField(v2Arg.settingsPath);
             if (GUILayout.Button("Choose"))
                 v2Arg.settingsPath = UnityFileDialog.FileBrowser.PickFile(null, null, new string[1] { "xml" }, "Select Settings");
@@ -233,7 +233,7 @@ namespace KeyViewer
                     MigrateErrorString = ie.Message;
                 }
             }
-            MoreGUILayout.DiscordButtonLabel(MigrateErrorString);
+            MoreGUILayout.NormalLabel(MigrateErrorString);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -315,7 +315,7 @@ namespace KeyViewer
             GUILayout.EndHorizontal();
             GUILayout.Space(4f);
             Settings.CurrentProfile.Name = MoreGUILayout.NamedTextField(Lang.GetString("PROFILE_NAME"), Settings.CurrentProfile.Name, 400f);
-            MoreGUILayout.DiscordButtonLabel(Lang.GetString("PROFILES"));
+            MoreGUILayout.NormalLabel(Lang.GetString("PROFILES"));
             int selected = Settings.ProfileIndex;
             if (MoreGUILayout.ToggleList(Settings.Profiles, ref selected, p => p.Name))
             {
@@ -327,7 +327,7 @@ namespace KeyViewer
         private static void DrawKeyRegisterSettingsGUI()
         {
             GUILayout.BeginHorizontal();
-            MoreGUILayout.DiscordButtonLabel(Lang.GetString("REGISTERED_KEYS"));
+            MoreGUILayout.NormalLabel(Lang.GetString("REGISTERED_KEYS"));
             KeyManager.Profile.IgnoreSkippedKeys = GUILayout.Toggle(KeyManager.Profile.IgnoreSkippedKeys, Lang.GetString("IGNORE_SKIPPED_KEYS"));
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
@@ -368,7 +368,7 @@ namespace KeyViewer
             {
                 if (GUILayout.Button(Lang.GetString("DONE")))
                     IsListening = false;
-                MoreGUILayout.DiscordButtonLabel(Lang.GetString("PRESS_KEY_REGISTER"));
+                MoreGUILayout.NormalLabel(Lang.GetString("PRESS_KEY_REGISTER"));
             }
             else
             {
@@ -435,7 +435,7 @@ namespace KeyViewer
             }
             GUILayout.Space(8f);
             GUILayout.BeginHorizontal();
-            MoreGUILayout.DiscordButtonLabel(Lang.GetString("KPS_UPDATE_RATE"));
+            MoreGUILayout.NormalLabel(Lang.GetString("KPS_UPDATE_RATE"));
             int.TryParse(GUILayout.TextField(KeyManager.Profile.KPSUpdateRateMs.ToString()), out KeyManager.Profile.KPSUpdateRateMs);
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();

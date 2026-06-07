@@ -56,9 +56,9 @@ namespace KeyViewer
                     if (!codes.Contains(key))
                         AddConfig(keyManager[key].config);
             }
-            MoreGUILayout.DiscordButtonLabel("Codes: ");
+            MoreGUILayout.NormalLabel("Codes: ");
             for (int i = 0; i < configs.Count; i++)
-                MoreGUILayout.DiscordButtonLabel($"{configs[i].Code} ");
+                MoreGUILayout.NormalLabel($"{configs[i].Code} ");
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             Name = MoreGUILayout.NamedTextField(Lang.GetString("KEY_GROUP_NAME"), Name, 400f);
