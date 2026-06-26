@@ -5,7 +5,6 @@ namespace KeyViewer
 {
     public static class AsyncInputCompat
     {
-        public static bool GetKey(KeyCode code) => AsyncInput.GetKey(Convert(code));
         public static KeyCode Convert(KeyLabel label)
         {
             switch (label)
