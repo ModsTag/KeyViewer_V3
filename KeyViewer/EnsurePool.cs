@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace KeyViewer
 {
-    public class EnsurePool<T>
+    public sealed class EnsurePool<T>
     {
         private List<T> pool;
         private Func<T> ensurer;

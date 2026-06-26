@@ -1,33 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace KeyViewer.API
 {
     public static class InputAPI
     {
-        public static bool Active
+        public static bool Lock
         {
-            get => active;
+            get => m_lock;
             set
             {
-                active = value;
-                EventActive = value;
-                APIFlags.Clear();
+                m_lock = value;
+                Array.Clear(m_lockkeys, 0, m_lockkeys.Length);
             }
         }
-        public static bool EventActive { get; set; }
-        public static void PressKey(KeyCode key)
-            => APIFlags[key] = true;
-        public static void ReleaseKey(KeyCode key)
-            => APIFlags[key] = false;
-        public static event Action<KeyCode> OnKeyPressed = delegate { };
-        public static event Action<KeyCode> OnKeyReleased = delegate { };
-        internal static readonly Dictionary<KeyCode, bool> APIFlags = new Dictionary<KeyCode, bool>();
-        internal static void KeyPress(KeyCode key)
-            => OnKeyPressed(key);
-        internal static void KeyRelease(KeyCode key)
-            => OnKeyReleased(key);
-        private static bool active;
+
+        public static void UpdateKeyState(KeyCode key, bool state)
+            => m_keys[(int)key] = state;
+        public static void UpdateLockKeyState(KeyCode key, bool state)
+            => m_lockkeys[(int)key] = state;
+        public static bool GetKey(KeyCode key) => (int)key < 679 && (m_lock ? m_lockkeys[(int)key] : m_keys[(int)key]);
+
+        private static readonly bool[] m_keys = new bool[690];
+        private static readonly bool[] m_lockkeys = new bool[690];
+        private static bool m_lock;
     }
 }

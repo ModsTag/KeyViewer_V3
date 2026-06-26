@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using KeyViewer.API;
 using KeyViewer.Migration;
 using KeyViewer.Migration.V2;
 using KeyViewer.Patches;
@@ -140,8 +141,16 @@ namespace KeyViewer
                 showViewer = KeyManager.isPlaying;
             if (showViewer != KeyManager.gameObject.activeSelf)
                 KeyManager.gameObject.SetActive(showViewer);
-            KPSCalculatorSync.Update();
 
+            KPSCalculatorSync.Update();
+            
+            if (!AsyncInputManager.isActive)
+            {
+                foreach (KeyCode code in KeyCodes)
+                {
+                    InputAPI.UpdateKeyState(code, Input.GetKey(code));
+                }
+            }
             if (!IsListening) return;
             bool changed = false;
             foreach (KeyCode code in KeyCodes)

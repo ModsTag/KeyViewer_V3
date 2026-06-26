@@ -191,6 +191,11 @@ namespace KeyViewer
             return this;
         }
 
+        internal void ForceReleaseKey()
+        {
+            Pressed = false;
+        }
+
         private void Update()
         {
             if (!initialized || !layoutUpdated)
@@ -206,17 +211,10 @@ namespace KeyViewer
                     CountText.text = Total.ToString();
                     return;
             }
-            if (InputAPI.Active)
+            Pressed = InputAPI.GetKey(Code);
+            if (config.SpareCode != 0)
             {
-                Pressed = InputAPI.APIFlags.TryGetValue(Code, out var value) && value;
-            }
-            else
-            {
-                Pressed = AsyncInputCompat.GetKey(Code);
-                if (config.SpareCode != 0)
-                {
-                    Pressed |= AsyncInputCompat.GetKey(config.SpareCode);
-                }
+                Pressed |= InputAPI.GetKey(config.SpareCode);
             }
             if (Pressed == prevPressed)
             {
@@ -241,10 +239,6 @@ namespace KeyViewer
             VertexGradient colorGradient2;
             if (Pressed)
             {
-                if (InputAPI.EventActive)
-                {
-                    InputAPI.KeyPress(Code);
-                }
                 color = config.PressedBackgroundColor;
                 color2 = config.PressedOutlineColor;
                 colorGradient = config.PressedTextColor;
@@ -260,10 +254,6 @@ namespace KeyViewer
             }
             else
             {
-                if (InputAPI.EventActive)
-                {
-                    InputAPI.KeyRelease(Code);
-                }
                 color = config.ReleasedBackgroundColor;
                 color2 = config.ReleasedOutlineColor;
                 colorGradient = config.ReleasedTextColor;
