@@ -117,10 +117,12 @@ namespace KeyViewer.Migration.V2
                 conf.TooEarlyColor = Settings.TE;
                 conf.VeryEarlyColor = Settings.VE;
                 conf.EarlyPerfectColor = Settings.EP;
-                conf.PerfectColor = Settings.P;
+                conf.PerfectPlusColor = Settings.P;
+                conf.PerfectMinusColor = Settings.P;
                 conf.LatePerfectColor = Settings.LP;
                 conf.VeryLateColor = Settings.VL;
                 conf.TooLateColor = Settings.TL;
+                conf.PerfectOtherColor = Settings.P;
 
                 conf.PressedBackgroundColor = pf.PressedBackgroundColor;
                 conf.ReleasedBackgroundColor = pf.ReleasedBackgroundColor;

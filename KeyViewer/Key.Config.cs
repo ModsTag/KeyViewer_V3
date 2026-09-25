@@ -75,7 +75,11 @@ namespace KeyViewer
 
             private Color earlyPerfectColor = new Color(0.627f, 1f, 0.306f, 1f);
 
-            private Color perfectColor = new Color(0.376f, 1f, 0.307f, 1f);
+            private Color perfectPlusColor = new Color(0.376f, 1f, 0.307f, 1f);
+
+            private Color xperfectColor = new Color(0.376f, 1f, 1f, 1f);
+
+            private Color perfectMinusColor = new Color(0.376f, 1f, 0.307f, 1f);
 
             private Color latePerfectColor = new Color(0.627f, 1f, 0.306f, 1f);
 
@@ -88,6 +92,8 @@ namespace KeyViewer
             private Color failMissColor = new Color(0.851f, 0.346f, 1f, 1f);
 
             private Color failOverloadColor = new Color(0.851f, 0.346f, 1f, 1f);
+
+            private Color perfectOtherColor = new Color(0.376f, 1f, 0.307f, 1f);
 
             private VertexGradient pressedTextColor = new VertexGradient(Color.black);
 
@@ -122,7 +128,7 @@ namespace KeyViewer
             public string[] ReleasedCountTextColorHex = new string[4];
 
             [XmlIgnore]
-            public string[] HitMarginColorHex = new string[10];
+            public string[] HitMarginColorHex = new string[13];
 
             [XmlIgnore]
             public bool RelativeOffsetApplied;
@@ -312,16 +318,42 @@ namespace KeyViewer
                 }
             }
 
-            public Color PerfectColor
+            public Color PerfectPlusColor
             {
                 get
                 {
-                    return perfectColor;
+                    return perfectPlusColor;
                 }
                 set
                 {
-                    perfectColor = value;
+                    perfectPlusColor = value;
                     HitMarginColorHex[3] = ColorUtility.ToHtmlStringRGBA(value);
+                }
+            }
+
+            public Color XPerfectColor
+            {
+                get
+                {
+                    return xperfectColor;
+                }
+                set
+                {
+                    xperfectColor = value;
+                    HitMarginColorHex[4] = ColorUtility.ToHtmlStringRGBA(value);
+                }
+            }
+
+            public Color PerfectMinusColor
+            {
+                get
+                {
+                    return perfectMinusColor;
+                }
+                set
+                {
+                    perfectMinusColor = value;
+                    HitMarginColorHex[5] = ColorUtility.ToHtmlStringRGBA(value);
                 }
             }
 
@@ -334,7 +366,7 @@ namespace KeyViewer
                 set
                 {
                     latePerfectColor = value;
-                    HitMarginColorHex[4] = ColorUtility.ToHtmlStringRGBA(value);
+                    HitMarginColorHex[6] = ColorUtility.ToHtmlStringRGBA(value);
                 }
             }
 
@@ -347,7 +379,7 @@ namespace KeyViewer
                 set
                 {
                     veryLateColor = value;
-                    HitMarginColorHex[5] = ColorUtility.ToHtmlStringRGBA(value);
+                    HitMarginColorHex[7] = ColorUtility.ToHtmlStringRGBA(value);
                 }
             }
 
@@ -360,7 +392,7 @@ namespace KeyViewer
                 set
                 {
                     tooLateColor = value;
-                    HitMarginColorHex[6] = ColorUtility.ToHtmlStringRGBA(value);
+                    HitMarginColorHex[8] = ColorUtility.ToHtmlStringRGBA(value);
                 }
             }
 
@@ -373,7 +405,7 @@ namespace KeyViewer
                 set
                 {
                     multipressColor = value;
-                    HitMarginColorHex[7] = ColorUtility.ToHtmlStringRGBA(value);
+                    HitMarginColorHex[9] = ColorUtility.ToHtmlStringRGBA(value);
                 }
             }
 
@@ -386,7 +418,7 @@ namespace KeyViewer
                 set
                 {
                     failMissColor = value;
-                    HitMarginColorHex[8] = ColorUtility.ToHtmlStringRGBA(value);
+                    HitMarginColorHex[10] = ColorUtility.ToHtmlStringRGBA(value);
                 }
             }
 
@@ -399,7 +431,20 @@ namespace KeyViewer
                 set
                 {
                     failOverloadColor = value;
-                    HitMarginColorHex[9] = ColorUtility.ToHtmlStringRGBA(value);
+                    HitMarginColorHex[11] = ColorUtility.ToHtmlStringRGBA(value);
+                }
+            }
+
+            public Color PerfectOtherColor
+            {
+                get
+                {
+                    return perfectOtherColor;
+                }
+                set
+                {
+                    perfectOtherColor = value;
+                    HitMarginColorHex[12] = ColorUtility.ToHtmlStringRGBA(value);
                 }
             }
 
@@ -459,24 +504,30 @@ namespace KeyViewer
                 TooEarlyColor = new Color(1f, 0f, 0f, 1f);
                 VeryEarlyColor = new Color(1f, 0.436f, 0.306f, 1f);
                 EarlyPerfectColor = new Color(0.627f, 1f, 0.306f, 1f);
-                PerfectColor = new Color(0.376f, 1f, 0.307f, 1f);
+                PerfectPlusColor = new Color(0.376f, 1f, 0.307f, 1f);
+                XPerfectColor = new Color(0.376f, 1f, 1f, 1f);
+                PerfectMinusColor = new Color(0.376f, 1f, 0.307f, 1f);
                 LatePerfectColor = new Color(0.627f, 1f, 0.306f, 1f);
                 VeryLateColor = new Color(1f, 0.435f, 0.306f, 1f);
                 TooLateColor = new Color(1f, 0f, 0f, 1f);
                 MultipressColor = new Color(0f, 1f, 0.93f, 1f);
                 FailMissColor = new Color(0.851f, 0.346f, 1f, 1f);
                 FailOverloadColor = new Color(0.851f, 0.346f, 1f, 1f);
+                PerfectOtherColor = new Color(0.376f, 1f, 0.307f, 1f);
             }
 
-            public void ApplyConfig(Config config)
+            public void ApplyConfig(Config config, bool outOffset)
             {
                 RainEnabled = config.RainEnabled;
                 RainConfig = config.RainConfig.Copy();
                 Font = config.Font;
                 Width = config.Width;
                 Height = config.Height;
-                OffsetX = config.OffsetX;
-                OffsetY = config.OffsetY;
+                if (!outOffset)
+                {
+                    OffsetX = config.OffsetX;
+                    OffsetY = config.OffsetY;
+                }
                 ShrinkFactor = config.ShrinkFactor;
                 EaseDuration = config.EaseDuration;
                 Ease = config.Ease;
@@ -498,13 +549,16 @@ namespace KeyViewer
                 TooEarlyColor = config.TooEarlyColor;
                 VeryEarlyColor = config.VeryEarlyColor;
                 EarlyPerfectColor = config.EarlyPerfectColor;
-                PerfectColor = config.PerfectColor;
+                PerfectPlusColor = config.PerfectPlusColor;
+                XPerfectColor = config.XPerfectColor;
+                PerfectMinusColor = config.PerfectMinusColor;
                 LatePerfectColor = config.LatePerfectColor;
                 VeryLateColor = config.VeryLateColor;
                 TooLateColor = config.TooLateColor;
                 MultipressColor = config.MultipressColor;
                 FailMissColor = config.FailMissColor;
                 FailOverloadColor = config.FailOverloadColor;
+                PerfectOtherColor = config.PerfectOtherColor;
             }
 
             public void ApplyOffsetRelative(Config config)
@@ -514,132 +568,18 @@ namespace KeyViewer
                 RelativeOffsetY = config.OffsetY;
             }
 
-            public void ApplyConfigWithoutOffset(Config config)
-            {
-                RainEnabled = config.RainEnabled;
-                RainConfig = config.RainConfig.Copy();
-                Font = config.Font;
-                Width = config.Width;
-                Height = config.Height;
-                ShrinkFactor = config.ShrinkFactor;
-                EaseDuration = config.EaseDuration;
-                Ease = config.Ease;
-                TextOffsetX = config.TextOffsetX;
-                TextOffsetY = config.TextOffsetY;
-                CountTextOffsetX = config.CountTextOffsetX;
-                CountTextOffsetY = config.CountTextOffsetY;
-                TextFontSize = config.TextFontSize;
-                CountTextFontSize = config.CountTextFontSize;
-                PressedOutlineColor = config.PressedOutlineColor;
-                ReleasedOutlineColor = config.ReleasedOutlineColor;
-                PressedBackgroundColor = config.PressedBackgroundColor;
-                ReleasedBackgroundColor = config.ReleasedBackgroundColor;
-                PressedTextColor = config.PressedTextColor;
-                ReleasedTextColor = config.ReleasedTextColor;
-                PressedCountTextColor = config.PressedCountTextColor;
-                ReleasedCountTextColor = config.ReleasedCountTextColor;
-                ChangeBgColorJudge = config.ChangeBgColorJudge;
-                TooEarlyColor = config.TooEarlyColor;
-                VeryEarlyColor = config.VeryEarlyColor;
-                EarlyPerfectColor = config.EarlyPerfectColor;
-                PerfectColor = config.PerfectColor;
-                LatePerfectColor = config.LatePerfectColor;
-                VeryLateColor = config.VeryLateColor;
-                TooLateColor = config.TooLateColor;
-                MultipressColor = config.MultipressColor;
-                FailMissColor = config.FailMissColor;
-                FailOverloadColor = config.FailOverloadColor;
-            }
-
-            public void ApplyConfigAll(Config config)
-            {
-                keyManager = config.keyManager;
-                RainEnabled = config.RainEnabled;
-                RainConfig = config.RainConfig.Copy();
-                Font = config.Font;
-                Code = config.Code;
-                SpecialType = config.SpecialType;
-                Width = config.Width;
-                Height = config.Height;
-                OffsetX = config.OffsetX;
-                OffsetY = config.OffsetY;
-                ShrinkFactor = config.ShrinkFactor;
-                EaseDuration = config.EaseDuration;
-                Ease = config.Ease;
-                SpareCode = config.SpareCode;
-                Count = config.Count;
-                TextFontSize = config.TextFontSize;
-                CountTextFontSize = config.CountTextFontSize;
-                TextOffsetX = config.TextOffsetX;
-                TextOffsetY = config.TextOffsetY;
-                CountTextOffsetX = config.CountTextOffsetX;
-                CountTextOffsetY = config.CountTextOffsetY;
-                PressedOutlineColor = config.PressedOutlineColor;
-                ReleasedOutlineColor = config.ReleasedOutlineColor;
-                PressedBackgroundColor = config.PressedBackgroundColor;
-                ReleasedBackgroundColor = config.ReleasedBackgroundColor;
-                PressedTextColor = config.PressedTextColor;
-                ReleasedTextColor = config.ReleasedTextColor;
-                PressedCountTextColor = config.PressedCountTextColor;
-                ReleasedCountTextColor = config.ReleasedCountTextColor;
-                ChangeBgColorJudge = config.ChangeBgColorJudge;
-                TooEarlyColor = config.TooEarlyColor;
-                VeryEarlyColor = config.VeryEarlyColor;
-                EarlyPerfectColor = config.EarlyPerfectColor;
-                PerfectColor = config.PerfectColor;
-                LatePerfectColor = config.LatePerfectColor;
-                VeryLateColor = config.VeryLateColor;
-                TooLateColor = config.TooLateColor;
-                MultipressColor = config.MultipressColor;
-                FailMissColor = config.FailMissColor;
-                FailOverloadColor = config.FailOverloadColor;
-            }
-
             public Config Copy()
             {
-                return new Config
+                Config dup = new Config()
                 {
                     keyManager = keyManager,
-                    RainEnabled = RainEnabled,
-                    RainConfig = RainConfig.Copy(),
-                    Font = Font,
                     Code = Code,
                     SpecialType = SpecialType,
-                    Width = Width,
-                    Height = Height,
-                    OffsetX = OffsetX,
-                    OffsetY = OffsetY,
-                    ShrinkFactor = ShrinkFactor,
-                    EaseDuration = EaseDuration,
-                    Ease = Ease,
                     SpareCode = SpareCode,
                     Count = Count,
-                    TextFontSize = TextFontSize,
-                    CountTextFontSize = CountTextFontSize,
-                    TextOffsetX = TextOffsetX,
-                    TextOffsetY = TextOffsetY,
-                    CountTextOffsetX = CountTextOffsetX,
-                    CountTextOffsetY = CountTextOffsetY,
-                    PressedOutlineColor = PressedOutlineColor,
-                    ReleasedOutlineColor = ReleasedOutlineColor,
-                    PressedBackgroundColor = PressedBackgroundColor,
-                    ReleasedBackgroundColor = ReleasedBackgroundColor,
-                    PressedTextColor = PressedTextColor,
-                    ReleasedTextColor = ReleasedTextColor,
-                    PressedCountTextColor = PressedCountTextColor,
-                    ReleasedCountTextColor = ReleasedCountTextColor,
-                    ChangeBgColorJudge = ChangeBgColorJudge,
-                    TooEarlyColor = TooEarlyColor,
-                    VeryEarlyColor = VeryEarlyColor,
-                    EarlyPerfectColor = EarlyPerfectColor,
-                    PerfectColor = PerfectColor,
-                    LatePerfectColor = LatePerfectColor,
-                    VeryLateColor = VeryLateColor,
-                    TooLateColor = TooLateColor,
-                    MultipressColor = MultipressColor,
-                    FailMissColor = FailMissColor,
-                    FailOverloadColor = FailOverloadColor
                 };
+                dup.ApplyConfig(this, false);
+                return dup;
             }
         }
     }

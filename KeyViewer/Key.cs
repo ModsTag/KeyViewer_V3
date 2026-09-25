@@ -1,9 +1,8 @@
-﻿using System;
+﻿using DG.Tweening;
+using KeyViewer.API;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Serialization;
-using DG.Tweening;
-using KeyViewer.API;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -807,70 +806,92 @@ namespace KeyViewer
                 GUILayout.EndHorizontal();
                 if (config.ChangeBgColorJudge = GUILayout.Toggle(config.ChangeBgColorJudge, lang.GetString("CHANGE_BG_COLOR_FOLLOWING_HITMARGIN")))
                 {
+                    (string l, string h) colorHex;
                     MoreGUILayout.BeginIndent();
                     GUILayout.BeginHorizontal();
-                    var (text15, text16) = MoreGUILayout.NamedTextFieldPair("Too Early Hex:", "Very Early Hex:", config.HitMarginColorHex[0], config.HitMarginColorHex[1], 100f, 120f);
+                    colorHex = MoreGUILayout.NamedTextFieldPair("Too Early Hex:", "Very Early Hex:", config.HitMarginColorHex[0], config.HitMarginColorHex[1], 100f, 120f);
                     GUILayout.EndHorizontal();
-                    if (text15 != config.HitMarginColorHex[0] && ColorUtility.TryParseHtmlString("#" + text15, out var color7))
+                    if (colorHex.l != config.HitMarginColorHex[0] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out var color7))
                     {
                         config.TooEarlyColor = color7;
                         keyManager.UpdateLayout();
                     }
-                    if (text16 != config.HitMarginColorHex[1] && ColorUtility.TryParseHtmlString("#" + text16, out color7))
+                    if (colorHex.h != config.HitMarginColorHex[1] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color7))
                     {
                         config.VeryEarlyColor = color7;
                         keyManager.UpdateLayout();
                     }
                     GUILayout.BeginHorizontal();
-                    var (text17, text18) = MoreGUILayout.NamedTextFieldPair("Early Perfect Hex:", "Perfect Hex:", config.HitMarginColorHex[2], config.HitMarginColorHex[3], 100f, 120f);
+                    colorHex = MoreGUILayout.NamedTextFieldPair("Early Perfect Hex:", "Perfect Plus Hex:", config.HitMarginColorHex[2], config.HitMarginColorHex[3], 100f, 120f);
                     GUILayout.EndHorizontal();
-                    if (text17 != config.HitMarginColorHex[2] && ColorUtility.TryParseHtmlString("#" + text17, out color7))
+                    if (colorHex.l != config.HitMarginColorHex[2] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color7))
                     {
                         config.EarlyPerfectColor = color7;
                         keyManager.UpdateLayout();
                     }
-                    if (text18 != config.HitMarginColorHex[3] && ColorUtility.TryParseHtmlString("#" + text18, out color7))
+                    if (colorHex.h != config.HitMarginColorHex[3] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color7))
                     {
-                        config.PerfectColor = color7;
+                        config.PerfectPlusColor = color7;
                         keyManager.UpdateLayout();
                     }
                     GUILayout.BeginHorizontal();
-                    var (text19, text20) = MoreGUILayout.NamedTextFieldPair("Late Perfect Hex:", "Very Late Hex:", config.HitMarginColorHex[4], config.HitMarginColorHex[5], 100f, 120f);
+                    colorHex = MoreGUILayout.NamedTextFieldPair("XPerfect Hex:", "Perfect Minus Hex:", config.HitMarginColorHex[4], config.HitMarginColorHex[5], 100f, 120f);
                     GUILayout.EndHorizontal();
-                    if (text19 != config.HitMarginColorHex[4] && ColorUtility.TryParseHtmlString("#" + text19, out color7))
+                    if (colorHex.l != config.HitMarginColorHex[4] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color7))
+                    {
+                        config.XPerfectColor = color7;
+                        keyManager.UpdateLayout();
+                    }
+                    if (colorHex.h != config.HitMarginColorHex[5] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color7))
+                    {
+                        config.PerfectMinusColor = color7;
+                        keyManager.UpdateLayout();
+                    }
+                    GUILayout.BeginHorizontal();
+                    colorHex = MoreGUILayout.NamedTextFieldPair("Late Perfect Hex:", "Very Late Hex:", config.HitMarginColorHex[6], config.HitMarginColorHex[7], 100f, 120f);
+                    GUILayout.EndHorizontal();
+                    if (colorHex.l != config.HitMarginColorHex[6] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color7))
                     {
                         config.LatePerfectColor = color7;
                         keyManager.UpdateLayout();
                     }
-                    if (text20 != config.HitMarginColorHex[5] && ColorUtility.TryParseHtmlString("#" + text20, out color7))
+                    if (colorHex.h != config.HitMarginColorHex[7] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color7))
                     {
                         config.VeryLateColor = color7;
                         keyManager.UpdateLayout();
                     }
                     GUILayout.BeginHorizontal();
-                    var (text21, text22) = MoreGUILayout.NamedTextFieldPair("Too Late Hex:", "Multipress Hex:", config.HitMarginColorHex[6], config.HitMarginColorHex[7], 100f, 120f);
+                    colorHex = MoreGUILayout.NamedTextFieldPair("Too Late Hex:", "Multipress Hex:", config.HitMarginColorHex[8], config.HitMarginColorHex[9], 100f, 120f);
                     GUILayout.EndHorizontal();
-                    if (text21 != config.HitMarginColorHex[6] && ColorUtility.TryParseHtmlString("#" + text21, out color7))
+                    if (colorHex.l != config.HitMarginColorHex[8] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color7))
                     {
                         config.TooLateColor = color7;
                         keyManager.UpdateLayout();
                     }
-                    if (text22 != config.HitMarginColorHex[7] && ColorUtility.TryParseHtmlString("#" + text22, out color7))
+                    if (colorHex.h != config.HitMarginColorHex[9] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color7))
                     {
                         config.MultipressColor = color7;
                         keyManager.UpdateLayout();
                     }
                     GUILayout.BeginHorizontal();
-                    var (text23, text24) = MoreGUILayout.NamedTextFieldPair("Fail Miss Hex:", "Fail Overload Hex:", config.HitMarginColorHex[8], config.HitMarginColorHex[9], 100f, 120f);
+                    colorHex = MoreGUILayout.NamedTextFieldPair("Fail Miss Hex:", "Fail Overload Hex:", config.HitMarginColorHex[10], config.HitMarginColorHex[11], 100f, 120f);
                     GUILayout.EndHorizontal();
-                    if (text23 != config.HitMarginColorHex[8] && ColorUtility.TryParseHtmlString("#" + text23, out color7))
+                    if (colorHex.l != config.HitMarginColorHex[10] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color7))
                     {
                         config.FailMissColor = color7;
                         keyManager.UpdateLayout();
                     }
-                    if (text24 != config.HitMarginColorHex[9] && ColorUtility.TryParseHtmlString("#" + text24, out color7))
+                    if (colorHex.h != config.HitMarginColorHex[11] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color7))
                     {
                         config.FailOverloadColor = color7;
+                        keyManager.UpdateLayout();
+                    }
+                    GUILayout.BeginHorizontal();
+                    colorHex = MoreGUILayout.NamedTextFieldPair("Other Perfect Hex:", "None:", config.HitMarginColorHex[12], "#000000", 100f, 120f);
+                    GUILayout.EndHorizontal();
+                    if (colorHex.l != config.HitMarginColorHex[12] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color7))
+                    {
+                        config.PerfectOtherColor = color7;
                         keyManager.UpdateLayout();
                     }
                     MoreGUILayout.EndIndent();
@@ -1189,14 +1210,19 @@ namespace KeyViewer
                 HitMargin.TooEarly => config.TooEarlyColor,
                 HitMargin.VeryEarly => config.VeryEarlyColor,
                 HitMargin.EarlyPerfect => config.EarlyPerfectColor,
-                HitMargin.Perfect => config.PerfectColor,
+                HitMargin.PerfectPlus => config.PerfectPlusColor,
+                HitMargin.XPerfect => config.XPerfectColor,
+                HitMargin.PerfectMinus => config.PerfectMinusColor,
                 HitMargin.LatePerfect => config.LatePerfectColor,
                 HitMargin.VeryLate => config.VeryLateColor,
                 HitMargin.TooLate => config.TooLateColor,
                 HitMargin.Multipress => config.MultipressColor,
                 HitMargin.FailMiss => config.FailMissColor,
                 HitMargin.FailOverload => config.FailOverloadColor,
-                HitMargin.Auto => config.PerfectColor,
+                HitMargin.Auto => config.PerfectOtherColor,
+                HitMargin.Midspin => config.PerfectOtherColor,
+                HitMargin.OverPress => config.MultipressColor,
+                HitMargin.FailedFloor => config.MultipressColor,
                 _ => config.PressedBackgroundColor,
             };
         }
@@ -1802,70 +1828,92 @@ namespace KeyViewer
             bool flag2;
             if (flag2 = GUILayout.Toggle(config.ChangeBgColorJudge, Main.Lang.GetString("CHANGE_BG_COLOR_FOLLOWING_HITMARGIN")))
             {
+                (string l, string h) colorHex;
                 MoreGUILayout.BeginIndent();
                 GUILayout.BeginHorizontal();
-                var (text2, text3) = MoreGUILayout.NamedTextFieldPair("Too Early Hex:", "Very Early Hex:", config.HitMarginColorHex[0], config.HitMarginColorHex[1], 100f, 120f);
+                colorHex = MoreGUILayout.NamedTextFieldPair("Too Early Hex:", "Very Early Hex:", config.HitMarginColorHex[0], config.HitMarginColorHex[1], 100f, 120f);
                 GUILayout.EndHorizontal();
-                if (text2 != config.HitMarginColorHex[0] && ColorUtility.TryParseHtmlString("#" + text2, out var color))
+                if (colorHex.l != config.HitMarginColorHex[0] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out var color))
                 {
                     config.TooEarlyColor = color;
                     onChange(config);
                 }
-                if (text3 != config.HitMarginColorHex[1] && ColorUtility.TryParseHtmlString("#" + text3, out color))
+                if (colorHex.h != config.HitMarginColorHex[1] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color))
                 {
                     config.VeryEarlyColor = color;
                     onChange(config);
                 }
                 GUILayout.BeginHorizontal();
-                var (text4, text5) = MoreGUILayout.NamedTextFieldPair("Early Perfect Hex:", "Perfect Hex:", config.HitMarginColorHex[2], config.HitMarginColorHex[3], 100f, 120f);
+                colorHex = MoreGUILayout.NamedTextFieldPair("Early Perfect Hex:", "Perfect Plus Hex:", config.HitMarginColorHex[2], config.HitMarginColorHex[3], 100f, 120f);
                 GUILayout.EndHorizontal();
-                if (text4 != config.HitMarginColorHex[2] && ColorUtility.TryParseHtmlString("#" + text4, out color))
+                if (colorHex.l != config.HitMarginColorHex[2] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color))
                 {
                     config.EarlyPerfectColor = color;
                     onChange(config);
                 }
-                if (text5 != config.HitMarginColorHex[3] && ColorUtility.TryParseHtmlString("#" + text5, out color))
+                if (colorHex.h != config.HitMarginColorHex[3] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color))
                 {
-                    config.PerfectColor = color;
+                    config.PerfectPlusColor = color;
                     onChange(config);
                 }
                 GUILayout.BeginHorizontal();
-                var (text6, text7) = MoreGUILayout.NamedTextFieldPair("Late Perfect Hex:", "Very Late Hex:", config.HitMarginColorHex[4], config.HitMarginColorHex[5], 100f, 120f);
+                colorHex = MoreGUILayout.NamedTextFieldPair("XPerfect Hex:", "Perfect Minus Hex:", config.HitMarginColorHex[4], config.HitMarginColorHex[5], 100f, 120f);
                 GUILayout.EndHorizontal();
-                if (text6 != config.HitMarginColorHex[4] && ColorUtility.TryParseHtmlString("#" + text6, out color))
+                if (colorHex.l != config.HitMarginColorHex[4] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color))
+                {
+                    config.XPerfectColor = color;
+                    onChange(config);
+                }
+                if (colorHex.h != config.HitMarginColorHex[5] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color))
+                {
+                    config.PerfectMinusColor = color;
+                    onChange(config);
+                }
+                GUILayout.BeginHorizontal();
+                colorHex = MoreGUILayout.NamedTextFieldPair("Late Perfect Hex:", "Very Late Hex:", config.HitMarginColorHex[6], config.HitMarginColorHex[7], 100f, 120f);
+                GUILayout.EndHorizontal();
+                if (colorHex.l != config.HitMarginColorHex[6] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color))
                 {
                     config.LatePerfectColor = color;
                     onChange(config);
                 }
-                if (text7 != config.HitMarginColorHex[5] && ColorUtility.TryParseHtmlString("#" + text7, out color))
+                if (colorHex.h != config.HitMarginColorHex[7] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color))
                 {
                     config.VeryLateColor = color;
                     onChange(config);
                 }
                 GUILayout.BeginHorizontal();
-                var (text8, text9) = MoreGUILayout.NamedTextFieldPair("Too Late Hex:", "Multipress Hex:", config.HitMarginColorHex[6], config.HitMarginColorHex[7], 100f, 120f);
+                colorHex = MoreGUILayout.NamedTextFieldPair("Too Late Hex:", "Multipress Hex:", config.HitMarginColorHex[8], config.HitMarginColorHex[9], 100f, 120f);
                 GUILayout.EndHorizontal();
-                if (text8 != config.HitMarginColorHex[6] && ColorUtility.TryParseHtmlString("#" + text8, out color))
+                if (colorHex.l != config.HitMarginColorHex[8] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color))
                 {
                     config.TooLateColor = color;
                     onChange(config);
                 }
-                if (text9 != config.HitMarginColorHex[7] && ColorUtility.TryParseHtmlString("#" + text9, out color))
+                if (colorHex.h != config.HitMarginColorHex[9] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color))
                 {
                     config.MultipressColor = color;
                     onChange(config);
                 }
                 GUILayout.BeginHorizontal();
-                var (text10, text11) = MoreGUILayout.NamedTextFieldPair("Fail Miss Hex:", "Fail Overload Hex:", config.HitMarginColorHex[8], config.HitMarginColorHex[9], 100f, 120f);
+                colorHex = MoreGUILayout.NamedTextFieldPair("Fail Miss Hex:", "Fail Overload Hex:", config.HitMarginColorHex[10], config.HitMarginColorHex[11], 100f, 120f);
                 GUILayout.EndHorizontal();
-                if (text10 != config.HitMarginColorHex[8] && ColorUtility.TryParseHtmlString("#" + text10, out color))
+                if (colorHex.l != config.HitMarginColorHex[10] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color))
                 {
                     config.FailMissColor = color;
                     onChange(config);
                 }
-                if (text11 != config.HitMarginColorHex[9] && ColorUtility.TryParseHtmlString("#" + text11, out color))
+                if (colorHex.h != config.HitMarginColorHex[11] && ColorUtility.TryParseHtmlString("#" + colorHex.h, out color))
                 {
                     config.FailOverloadColor = color;
+                    onChange(config);
+                }
+                GUILayout.BeginHorizontal();
+                colorHex = MoreGUILayout.NamedTextFieldPair("Other Perfect Hex:", "None:", config.HitMarginColorHex[12], "#000000", 100f, 120f);
+                GUILayout.EndHorizontal();
+                if (colorHex.l != config.HitMarginColorHex[12] && ColorUtility.TryParseHtmlString("#" + colorHex.l, out color))
+                {
+                    config.PerfectOtherColor = color;
                     onChange(config);
                 }
                 MoreGUILayout.EndIndent();

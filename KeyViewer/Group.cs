@@ -90,9 +90,7 @@ namespace KeyViewer
             {
                 configs.ForEach(conf =>
                 {
-                    if (keyManager.Profile.ApplyWithOffset)
-                        conf.ApplyConfig(c);
-                    else conf.ApplyConfigWithoutOffset(c);
+                    conf.ApplyConfig(c, !keyManager.Profile.ApplyWithOffset);
                 });
                 keyManager.UpdateLayout();
             });

@@ -473,9 +473,7 @@ namespace KeyViewer
         public static void ApplyEachKeys(Key.Config keyConfig)
         {
             foreach (Key key in KeyManager.keys.Values)
-                if (KeyManager.Profile.ApplyWithOffset)
-                    key.config.ApplyConfig(keyConfig);
-                else key.config.ApplyConfigWithoutOffset(keyConfig);
+                key.config.ApplyConfig(keyConfig, !KeyManager.Profile.ApplyWithOffset);
             KeyManager.UpdateLayout();
         }
         public static bool Equals(this VertexGradient left, VertexGradient right)
