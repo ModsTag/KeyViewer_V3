@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityModManagerNet;
@@ -9,11 +8,14 @@ namespace KeyViewer
 {
     public partial class KeyRain : MonoBehaviour
     {
-        private bool stretching;
+        private long m_tmpTime;
+        private bool m_stretching;
         internal Image image;
         private Key key;
         private RectTransform rt;
-        private bool initialized = false;
+        private Vector2 m_startSize;
+        private Vector2 m_startPosition;
+        private Vector2 m_lastPosition;
 
         private static readonly string[] dirNames = new string[4] { "Up", "Down", "Left", "Right" };
         private static readonly Direction[] dirValues = (Direction[])Enum.GetValues(typeof(Direction));
@@ -40,20 +42,50 @@ namespace KeyViewer
             ResetSizePos();
         }
 
-        public void Press()
+        public void Press(long time)
         {
-            stretching = true;
+            m_stretching = true;
+            m_tmpTime = time;
+            RainUpdate(TimeGetter.GetTime());
+        }
+
+        public void Release(long time)
+        {
+            RainUpdate(time);
+            m_stretching = false;
+            m_tmpTime = time;
         }
 
         public void ResetSizePos()
         {
-            rt.sizeDelta = GetInitialSize();
-            rt.anchoredPosition = GetPosition(config.Direction);
+            m_startSize = GetInitialSize();
+            rt.sizeDelta = m_startSize;
+            m_startPosition = GetPosition(config.Direction);
+            rt.anchoredPosition = m_startPosition;
         }
 
-        public void Release()
+        private void RainUpdate(long time)
         {
-            stretching = false;
+            Vector2 delta = GetDelta(config.Direction, (time - m_tmpTime) * 1e-7f * config.RainSpeed);
+            if (m_stretching)
+            {
+                Vector2 zero = Vector2.zero;
+                if (delta.x != 0)
+                {
+                    zero.x = Mathf.Abs(delta.x);
+                }
+                else if (delta.y != 0)
+                {
+                    zero.y = Mathf.Abs(delta.y);
+                }
+                rt.sizeDelta = m_startSize + zero;
+                m_lastPosition = m_startPosition + delta * 0.5f;
+                rt.anchoredPosition = m_lastPosition;
+            }
+            else
+            {
+                rt.anchoredPosition = m_lastPosition + delta;
+            }
         }
 
         private void Update()
@@ -61,30 +93,11 @@ namespace KeyViewer
             IsAlive = IsVisible(config.Direction);
             if (IsAlive)
             {
-                Vector2 delta = GetDelta(config.Direction, Time.deltaTime * config.RainSpeed);
-                Vector2 sizeDelta = rt.sizeDelta;
-                if (stretching)
-                {
-                    Vector2 zero = Vector2.zero;
-                    if ((double)delta.x != 0.0)
-                    {
-                        zero.x += Mathf.Abs(delta.x);
-                    }
-                    else if ((double)delta.y != 0.0)
-                    {
-                        zero.y += Mathf.Abs(delta.y);
-                    }
-                    rt.sizeDelta = sizeDelta + zero;
-                    rt.anchoredPosition += delta * 0.5f;
-                }
-                else
-                {
-                    rt.anchoredPosition += delta;
-                }
+                RainUpdate(TimeGetter.GetTime());
             }
             else
             {
-                stretching = false;
+                m_stretching = false;
                 ResetSizePos();
                 base.gameObject.SetActive(value: false);
             }
@@ -182,10 +195,10 @@ namespace KeyViewer
         {
             return dir switch
             {
-                Direction.U => (double)rt.anchoredPosition.y - (double)rt.sizeDelta.y <= (double)config.RainLength,
-                Direction.D => 0.0 - (double)rt.anchoredPosition.y - (double)rt.sizeDelta.y <= (double)config.RainLength,
-                Direction.L => 0.0 - (double)rt.anchoredPosition.x - (double)rt.sizeDelta.x <= (double)config.RainLength,
-                Direction.R => (double)rt.anchoredPosition.x - (double)rt.sizeDelta.x <= (double)config.RainLength,
+                Direction.U => rt.anchoredPosition.y - rt.sizeDelta.y <= config.RainLength,
+                Direction.D => 0 - rt.anchoredPosition.y - rt.sizeDelta.y <= config.RainLength,
+                Direction.L => 0 - rt.anchoredPosition.x - rt.sizeDelta.x <= config.RainLength,
+                Direction.R => rt.anchoredPosition.x - rt.sizeDelta.x <= config.RainLength,
                 _ => false,
             };
         }
@@ -196,12 +209,12 @@ namespace KeyViewer
             {
                 case Direction.U:
                 case Direction.D:
-                    return ((double)config.RainWidth <= 0.0) ? new Vector2(key.config.Width, 0f) : new Vector2(config.RainWidth, 0f);
+                    return (config.RainWidth <= 0) ? new Vector2(key.config.Width, 0f) : new Vector2(config.RainWidth, 0f);
                 case Direction.L:
                 case Direction.R:
                     {
                         int num = (key.config.keyManager.Profile.ShowKeyPressTotal ? 50 : 0) + 5;
-                        return ((double)config.RainHeight <= 0.0) ? new Vector2(0f, key.config.Height + (float)num) : new Vector2(0f, config.RainHeight);
+                        return (config.RainHeight <= 0) ? new Vector2(0f, key.config.Height + num) : new Vector2(0f, config.RainHeight);
                     }
                 default:
                     return Vector2.zero;
@@ -225,10 +238,10 @@ namespace KeyViewer
             Vector2 sizeDelta = key.rainMaskRt.sizeDelta;
             return dir switch
             {
-                Direction.U => new Vector2(0f, (float)((0.0 - (double)sizeDelta.y) / 2.0) + (float)config.Softness),
-                Direction.D => new Vector2(0f, sizeDelta.y / 2f - (float)config.Softness),
-                Direction.L => new Vector2(sizeDelta.x / 2f - (float)config.Softness, 0f),
-                Direction.R => new Vector2((float)((0.0 - (double)sizeDelta.x) / 2.0) + (float)config.Softness, 0f),
+                Direction.U => new Vector2(0f, -sizeDelta.y / 2 + config.Softness),
+                Direction.D => new Vector2(0f, sizeDelta.y / 2f - config.Softness),
+                Direction.L => new Vector2(sizeDelta.x / 2f - config.Softness, 0f),
+                Direction.R => new Vector2(-sizeDelta.x / 2f + config.Softness, 0f),
                 _ => Vector2.zero,
             };
         }

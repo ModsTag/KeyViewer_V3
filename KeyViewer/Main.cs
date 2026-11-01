@@ -142,19 +142,24 @@ namespace KeyViewer
             if (showViewer != KeyManager.gameObject.activeSelf)
                 KeyManager.gameObject.SetActive(showViewer);
 
-            KPSCalculatorSync.Update();
-            
+            int keycount = KeyCodes.Length;
             if (!AsyncInputManager.isActive)
             {
-                foreach (KeyCode code in KeyCodes)
+                for (int i = 0; i < keycount; i++)
                 {
-                    InputAPI.UpdateKeyState(code, Input.GetKey(code));
+                    KeyCode code = KeyCodes[i];
+                    InputAPI.SetKeyState(code, Input.GetKey(code));
                 }
             }
+
+            KPSCalculatorSync.Update();
+            InputAPI.Update();
+
             if (!IsListening) return;
             bool changed = false;
-            foreach (KeyCode code in KeyCodes)
+            for (int i = 0; i < keycount; i++)
             {
+                KeyCode code = KeyCodes[i];
                 int index = -1;
                 if (!Input.GetKeyDown(code) || (SKIPPED_KEYS.Contains(code) && !KeyManager.Profile.IgnoreSkippedKeys)) continue;
                 if ((index = KeyManager.Profile.ActiveKeys.FindIndex(c => c.Code == code)) != -1)

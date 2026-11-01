@@ -73,6 +73,7 @@ namespace KeyViewer
         public SpecialKeyType SpecialType => config.SpecialType;
 
         public bool Pressed { get; private set; }
+        public bool Pressed2 { get; private set; }
 
         public Image Outline { get; private set; }
 
@@ -116,8 +117,7 @@ namespace KeyViewer
                 }, (KeyRain kr) => !kr.IsAlive, delegate (KeyRain kr)
                 {
                     kr.gameObject.SetActive(value: true);
-                }, UnityEngine.Object.Destroy);
-                rains.Fill(config.RainConfig.RainPoolSize);
+                }, UnityEngine.Object.Destroy, config.RainConfig.RainPoolSize);
             }
             GameObject gameObject = new GameObject("Background");
             gameObject.transform.SetParent(base.transform);
@@ -187,6 +187,8 @@ namespace KeyViewer
             }
             TweenID = ((!isSpecial) ? $"KeyViewer.{Code}Tween" : $"KeyViewer.{SpecialType}Tween");
             initialized = true;
+            InputAPI.AddKeyListener(config.Code, InputListen);
+            InputAPI.AddKeyListener(config.Code, InputListen2);
             return this;
         }
 
@@ -195,6 +197,28 @@ namespace KeyViewer
             Pressed = false;
         }
 
+        private void InputListen(long time, bool state)
+        {
+            Pressed = state;
+            if (config.RainEnabled && !Pressed2)
+            {
+                if (state)
+                    (toRelease = rains.Get()).Press(time);
+                else
+                    toRelease?.Release(time);
+            }
+        }
+        private void InputListen2(long time, bool state)
+        {
+            Pressed2 = state;
+            if (config.RainEnabled && !Pressed)
+            {
+                if (state)
+                    (toRelease = rains.Get()).Press(time);
+                else
+                    toRelease?.Release(time);
+            }
+        }
         private void Update()
         {
             if (!initialized || !layoutUpdated)
@@ -209,11 +233,6 @@ namespace KeyViewer
                 case SpecialKeyType.Total:
                     CountText.text = Total.ToString();
                     return;
-            }
-            Pressed = InputAPI.GetKey(Code);
-            if (config.SpareCode != 0)
-            {
-                Pressed |= InputAPI.GetKey(config.SpareCode);
             }
             if (Pressed == prevPressed)
             {
@@ -246,10 +265,6 @@ namespace KeyViewer
                 {
                     scale *= config.ShrinkFactor;
                 }
-                if (config.RainEnabled)
-                {
-                    (toRelease = rains.Get()).Press();
-                }
             }
             else
             {
@@ -257,10 +272,6 @@ namespace KeyViewer
                 color2 = config.ReleasedOutlineColor;
                 colorGradient = config.ReleasedTextColor;
                 colorGradient2 = config.ReleasedCountTextColor;
-                if (config.RainEnabled)
-                {
-                    toRelease?.Release();
-                }
             }
             if (Pressed && forceBgColor.HasValue)
             {
@@ -460,21 +471,15 @@ namespace KeyViewer
                     rainMaskRt.sizeDelta = GetSizeDelta(rConfig.Direction);
                     rainMaskRt.anchoredPosition = GetMaskPosition(rConfig.Direction);
                     Sprite sprite = Main.GetSprite(rConfig.RainImage);
-                    if (sprite != null)
+                    int count = rains.Count;
+                    for (int i = 0; i < count; i++)
                     {
-                        rains.ForEach(delegate (KeyRain kr)
-                        {
+                        KeyRain kr = rains[i];
+                        if (sprite != null)
                             kr.image.sprite = sprite;
-                        });
-                    }
-                    rains.ForEach(delegate (KeyRain kr)
-                    {
                         kr.image.color = rConfig.RainColor;
-                    });
-                    rains.ForEach(delegate (KeyRain kr)
-                    {
                         kr.ResetSizePos();
-                    });
+                    }
                 }
             }
             layoutUpdated = true;
@@ -792,7 +797,9 @@ namespace KeyViewer
                 GUILayout.Label("KeyCode:");
                 DrawKeyCode(config.Code, delegate (KeyCode code)
                 {
+                    InputAPI.RemoveKeyListener(config.Code, InputListen);
                     config.Code = code;
+                    InputAPI.AddKeyListener(config.Code, InputListen);
                 });
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
@@ -800,7 +807,9 @@ namespace KeyViewer
                 GUILayout.Label("Spare KeyCode:");
                 DrawSpareKeyCode(config.SpareCode, delegate (KeyCode code)
                 {
+                    InputAPI.RemoveKeyListener(config.SpareCode, InputListen2);
                     config.SpareCode = code;
+                    InputAPI.AddKeyListener(config.SpareCode, InputListen2);
                 });
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();

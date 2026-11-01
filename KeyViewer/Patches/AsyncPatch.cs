@@ -9,7 +9,7 @@ namespace KeyViewer.Patches
     {
         public static void Postfix()
         {
-            SkyHookManager.KeyUpdated.AddListener((SkyHookEvent she) => { InputAPI.UpdateKeyState(AsyncInputCompat.Convert(she.Label), she.Type == EventType.KeyPressed); });
+            SkyHookManager.KeyUpdated.AddListener(she => InputAPI.SetKeyState(AsyncInputCompat.Convert(she.Label), she.Type == EventType.KeyPressed, she.GetTimeInTicks()));
         }
     }
 }

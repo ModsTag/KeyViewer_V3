@@ -1,7 +1,7 @@
 ﻿using HarmonyLib;
 using KeyViewer.API;
+using KeyViewer.ModsTagVarArray;
 using SkyHook;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -10,12 +10,11 @@ namespace KeyViewer.Patches
     [HarmonyPatch]
     public static class JudgementColorPatch
     {
-        static bool initialized = false;
-        static HashSet<Key> keys = new HashSet<Key>();
+        static bool _initialized = false;
+        static SPSCCircularQueue<Key> _keys = new SPSCCircularQueue<Key>(4);
         public static void Init()
         {
-            if (initialized) return;
-            //keys = new ShiftStack<KeyCode>(() => Math.Max(Main.KeyManager?.keys.Count ?? 0, 2), KeyCode.None);
+            if (_initialized) return;
             SkyHookManager.KeyUpdated.AddListener(she =>
             {
                 try
@@ -27,22 +26,24 @@ namespace KeyViewer.Patches
                     {
                         var code = AsyncInputCompat.Convert(she.Label);
                         if (Main.KeyManager.Codes.Contains(code))
-                            keys.Add(Main.KeyManager[code]);
+                        {
+                            _keys.Enqueue(Main.KeyManager[code]);
+                        }
                     }
                 }
                 catch { }
             });
-            initialized = true;
+            _initialized = true;
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrPlayer), "ValidInputWasTriggered")]
         public static void SyncInput_StackPushPatch(scrController __instance)
         {
-            if (!initialized) return;
+            if (!_initialized) return;
             if (AsyncInputManager.isActive) return;
             foreach (var code in Main.KeyManager.Codes)
                 if (Input.GetKeyDown(code))
-                    keys.Add(Main.KeyManager[code]);
+                    _keys.Enqueue(Main.KeyManager[code]);
         }
         static bool stackFlushed = false;
         static bool rainRestored = false;
@@ -51,28 +52,34 @@ namespace KeyViewer.Patches
         [HarmonyPatch(typeof(scrController), "Update")]
         public static void StackFlushPatch(scrController __instance)
         {
-            if (!initialized) return;
+            if (!_initialized) return;
             var state = __instance.state;
             if (!stackFlushed && state == States.PlayerControl)
             {
-                keys.Clear();
+                _keys.Clear();
                 stackFlushed = true;
                 rainRestored = false;
             }
             if (!rainRestored && state != prevState)
             {
                 foreach (var activeKey in Main.KeyManager.Keys)
+                {
                     if (activeKey.config.RainEnabled)
-                        activeKey.rains.ForEach(kr => kr.image.color = activeKey.config.RainConfig.RainColor);
+                    {
+                        int count = activeKey.rains.Count;
+                        for (int i = 0; i < count; i++)
+                            activeKey.rains[i].image.color = activeKey.config.RainConfig.RainColor;
+                    }
+                }
                 rainRestored = true;
+                prevState = state;
             }
-            prevState = state;
         }
         [HarmonyPrefix]
         [HarmonyPatch(typeof(scrController), "Awake_Rewind")]
         public static void StackFlushPatch2(scrController __instance)
         {
-            if (!initialized) return;
+            if (!_initialized) return;
             stackFlushed = false;
         }
         [Comment("Change Key's Background Color")]
@@ -80,10 +87,11 @@ namespace KeyViewer.Patches
         [HarmonyPatch(typeof(scrMarginTracker), "AddHit")]
         public static void ChangeColorPatch(HitMargin hit)
         {
-            if (!initialized) return;
-            foreach (var key in keys)
+            if (!_initialized) return;
+            while (_keys.TryDequeue(out var key))
+            {
                 key.ChangeHitMarginColor(hit);
-            keys.Clear();
+            }
         }
     }
 }
