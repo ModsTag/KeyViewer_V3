@@ -188,7 +188,7 @@ namespace KeyViewer
             TweenID = ((!isSpecial) ? $"KeyViewer.{Code}Tween" : $"KeyViewer.{SpecialType}Tween");
             initialized = true;
             InputAPI.AddKeyListener(config.Code, InputListen);
-            InputAPI.AddKeyListener(config.Code, InputListen2);
+            InputAPI.AddKeyListener(config.SpareCode, InputListen2);
             return this;
         }
 

@@ -66,6 +66,7 @@ namespace KeyViewer
                 Lang.ChangeLanguage(Settings.Language);
                 Harmony = new Harmony(modEntry.Info.Id);
                 Harmony.PatchAll(Assembly.GetExecutingAssembly());
+                InputAPI.RemoveAllListener();
                 KeyManager = new GameObject("KeyViewer KeyManager").AddComponent<KeyManager>();
                 profiles.ForEach(p => p.Init(KeyManager));
                 KeyManager.Init(Settings.CurrentProfile);
@@ -333,9 +334,9 @@ namespace KeyViewer
             int selected = Settings.ProfileIndex;
             if (MoreGUILayout.ToggleList(Settings.Profiles, ref selected, p => p.Name))
             {
+                InputAPI.RemoveAllListener();
                 Settings.ProfileIndex = selected;
                 KeyManager.Profile = Settings.CurrentProfile;
-                KPSCalculatorSync.Start(Settings.CurrentProfile);
             }
         }
         private static void DrawKeyRegisterSettingsGUI()
@@ -485,13 +486,6 @@ namespace KeyViewer
             => left.topLeft == right.topLeft && left.topRight == right.topRight && left.bottomLeft == right.bottomLeft && left.bottomRight == right.bottomRight;
         public static bool Inequals(this VertexGradient left, VertexGradient right)
             => left.topLeft != right.topLeft || left.topRight != right.topRight || left.bottomLeft != right.bottomLeft || left.bottomRight != right.bottomRight;
-        public static void CheckNull(this object obj, string identifier)
-            => Logger.Log($"{identifier} Is {(obj == null ? "Null" : "Not Null")}");
-        public static T LogObject<T>(this T obj)
-        {
-            Logger.Log(obj.ToString());
-            return obj;
-        }
         public static readonly ISet<KeyCode> SKIPPED_KEYS = new HashSet<KeyCode>()
         {
             KeyCode.Mouse0,
@@ -520,42 +514,5 @@ namespace KeyViewer
             texture.LoadImage(File.ReadAllBytes(path));
             return spriteCache[path] = texture.ToSprite();
         }
-        public static bool DrawEnum<T>(string title, ref T @enum) where T : Enum
-        {
-            T[] values = (T[])Enum.GetValues(typeof(T));
-            string[] names = values.Select(x => x.ToString()).ToArray();
-            int selected = Array.IndexOf(values, @enum);
-            bool result = UI.PopupToggleGroup(ref selected, names, title);
-            @enum = values[selected];
-            return result;
-        }
-        public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> pair, out TKey key, out TValue value)
-        {
-            key = pair.Key;
-            value = pair.Value;
-        }
-        public static void LogDifference<T>(Capture<T> oldCapture, Capture<T> newCapture)
-        {
-            if (!ReferenceEquals(oldCapture.original, oldCapture.original)) return;
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine($"Comparing {oldCapture.original} Difference");
-            foreach (var key in oldCapture.values.Keys.Union(newCapture.values.Keys))
-            {
-                sb.Append(' ', 4).Append($"{key} => ");
-                if (oldCapture.values.TryGetValue(key, out object oldValue))
-                    sb.Append($"Old Value: {oldValue ?? "null"}, ");
-                else sb.Append("Old Value: Not Exists, ");
-                if (newCapture.values.TryGetValue(key, out object newValue))
-                    sb.Append($"New Value: {newValue ?? "null"} ");
-                else sb.Append("New Value: Not Exists ");
-                if (Equals(oldValue, newValue))
-                    sb.AppendLine("(Old == New)");
-                else sb.AppendLine("<color=green>(Old != New)</color>");
-            }
-            Logger.Log($"\n{sb}");
-        }
-        public static readonly MethodInfo GCVAN = typeof(Enum).GetMethod("GetCachedValuesAndNames", (BindingFlags)15420);
-        public static readonly AccessTools.FieldRef<object, string[]> VAN_Names = AccessTools.FieldRefAccess<string[]>(typeof(Enum).GetNestedType("ValuesAndNames", (BindingFlags)15420), "Names");
-        public static readonly AccessTools.FieldRef<object, ulong[]> VAN_Values = AccessTools.FieldRefAccess<ulong[]>(typeof(Enum).GetNestedType("ValuesAndNames", (BindingFlags)15420), "Values");
     }
 }

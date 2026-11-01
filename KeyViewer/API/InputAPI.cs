@@ -34,9 +34,14 @@ namespace KeyViewer.API
         }
 
         public static void SetKeyState(KeyCode key, bool state, long time = 0)
-            => m_keyQueue.Enqueue((time != 0 ? time : DateTime.Now.Ticks, key, state));
+            => m_keyQueue.Enqueue((time != 0 ? time : TimeGetter.GetTime(), key, state));
         public static void SetLockKeyState(KeyCode key, bool state)
-            => m_keyQueue.Enqueue((DateTime.Now.Ticks, key, state));
+            => m_keyQueue.Enqueue((TimeGetter.GetTime(), key, state));
+
+        public static void RemoveAllListener()
+        {
+            m_queue.Clear();
+        }
 
         public static void AddKeyListener(KeyCode key, Action<long, bool> action)
         {
